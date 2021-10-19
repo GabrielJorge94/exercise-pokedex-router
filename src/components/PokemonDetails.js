@@ -1,4 +1,5 @@
 import React from 'react';
+import '../PokemonDetails.css';
 
 const initialState = {
   pokemonName: '',
@@ -6,6 +7,7 @@ const initialState = {
   pokemonWeight: 0,
   weightUnit: '',
   pokemonSum: '',
+  pokemonImg: '',
 }
 class PokemonDetails extends React.Component {
 
@@ -18,21 +20,22 @@ class PokemonDetails extends React.Component {
     this.renderMap = this.renderMap.bind(this);
   }
 
-  findPokemonById() {
+  findPokemonById(givenId) {
     const {pokemon} = this.props;
-    const {id} = this.props.match.params;
-        
-    const pokemonFiltered = pokemon.find((pokemon) => pokemon.id === parseInt(id, 10));
+    const findPokemon = pokemon.find((pokemon) => pokemon.id === givenId);
+
 
     this.setState(
       {
-        pokemonName: pokemonFiltered.name,
-        pokemonType: pokemonFiltered.type,
-        pokemonWeight: pokemonFiltered.averageWeight.value,
-        weightUnit: pokemonFiltered.averageWeight.measurementUnit,
-        pokemonSum: pokemonFiltered.summary,
+        pokemonName: findPokemon.name,
+        pokemonType: findPokemon.type,
+        pokemonWeight: findPokemon.averageWeight.value,
+        weightUnit: findPokemon.averageWeight.measurementUnit,
+        pokemonSum: findPokemon.summary,
+        pokemonImg: findPokemon.image,
       }
       );
+      return findPokemon;
   }
 
   renderMap() {
@@ -53,27 +56,32 @@ class PokemonDetails extends React.Component {
     ))
   }
 
-  componentDidMount(){
-  this.findPokemonById();
+  componentDidMount() {
+    const {id} = this.props.match.params;
+
+    this.findPokemonById(parseInt(id, 10));
   }
+
   render() {
-    const {pokemonName, pokemonType, pokemonWeight, weightUnit, pokemonSum} = this.state
-  return <div>
-    <p>
-      {pokemonName}
-    </p>
-    <p>
-      {pokemonType}
-    </p>
-    <p>
-      {pokemonWeight} 
-      {weightUnit}      
-    </p>
-    <p>
-      {pokemonSum}
-    </p>
-    {this.renderMap()}
-    </div>;
+    const {pokemonName, pokemonType, pokemonWeight, weightUnit, pokemonSum, pokemonImg} = this.state
+    return (
+      <div className="pokedex">
+        <div className="pokemon">
+          <div>
+          <p>{pokemonName}</p>
+          <p>{pokemonType}</p>
+          <p>
+            Average weight: {`${pokemonWeight} ${weightUnit}`}
+          </p>
+          </div>
+        <img src={pokemonImg} alt={`${pokemonName} sprite`} />
+        </div>
+        <div>
+          <h1>Summary</h1>
+          <p>{pokemonSum}</p>
+        </div>
+        {this.renderMap()}
+      </div>);
   }
 }
  
